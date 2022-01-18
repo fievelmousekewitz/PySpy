@@ -106,7 +106,7 @@ OPTIONS_OBJECT.Set("version", CURRENT_VER)
 MAX_NAMES = 500  # The max number of char names to be processed
 ZKILL_DELAY = 1  # API rate limit is 10/second, pushing it a little...
 ZKILL_CALLS = 100
-GUI_TITLE = "PySpy " + CURRENT_VER
+GUI_TITLE = "PySpy " + CURRENT_VER + " (Press Ctrl-F To Hide Caption Bar)"
 FONT_SCALE_MIN = 7  # 7 equates to 70%
 FONT_SCALE_MAX = 13
 MAX_SHIP_DATA_AGE = 7  # The maximum age of ship data (used in db.prepare_ship_data)

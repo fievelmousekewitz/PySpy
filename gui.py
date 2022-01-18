@@ -269,21 +269,53 @@ class Frame(wx.Frame):
         # Bind left click on column label to sorting
         self.Bind(wx.grid.EVT_GRID_COL_SORT, self.sortOutlist, self.grid)
 
+        # Draggable by grabbing frame
+        self.lastMousePos = wx.Point(0, 0)
+        self.Bind(wx.EVT_MOTION, self.OnFrame1Motion)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnFrame1LeftDown)
+        self.Bind(wx.EVT_LEFT_UP, self.OnFrame1LeftDown)
+
+        #self.Bind(wx.grid.EVT_GRID_CMD_CELL_BEGIN_DRAG, self.OnFrame1Motion)
+
+        self.windowX = 0
+        self.windowY = 0
+
         # Set transparency based off restored slider
         self._setTransparency()
         self.__do_layout()
+
+    def OnFrame1Motion(self, event):
+
+        if event.LeftIsDown():
+            print('Motion w click')
+            self.windowX = self.lastMousePos[0]
+            self.windowY = self.lastMousePos[1]
+        elif event.LeftUp():
+            print('Up')
+            screenX = wx.GetMousePosition()[0]
+            screenY = wx.GetMousePosition()[1]
+            self.Move(wx.Point(screenX - self.windowX, screenY - self.windowY))
+        event.Skip()
+
+    def OnFrame1LeftUp(self,event):
+
+        event.Skip()
+
+
+    def OnFrame1LeftDown(self, event):
+        self.lastMousePos = event.GetPosition()
+        print('LeftDown')
+        event.Skip()
 
     def OnKeyCombo(self, event):
         # cur win style
         style = wx.Frame.GetWindowStyle(self)
 
         if self.hiddenmenu:
-            #wx.Frame.SetWindowStyle(self, wx.DEFAULT_FRAME_STYLE)
             wx.Frame.SetWindowStyleFlag(self,wx.DEFAULT_FRAME_STYLE)
             self.SetMenuBar(self.menubar)
             self.hiddenmenu = False
         else:
-            #wx.Frame.SetWindowStyle(self,wx.NO_BORDER)
             wx.Frame.SetWindowStyleFlag(self,wx.NO_BORDER)
             self.SetMenuBar(None)
             self.hiddenmenu = True
