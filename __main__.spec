@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 '''Cross-platform (MacOSX and Windows 10) Spec file for pyinstaller.
-Be sure to not use python 3.7 until pyinstaller supports it.'''
+Be sure to not use python 3.7 until supports it.'''
 # cSpell Checker - Correct Words****************************************
 # // cSpell:words pyinstaller, pyspy, posix, icns, getcwd, datas,
 # // cSpell:words tkinter, noconsole

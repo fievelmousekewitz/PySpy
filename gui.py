@@ -37,6 +37,7 @@ class Frame(wx.Frame):
         # Persistent Options
         self.options = config.OPTIONS_OBJECT
 
+
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE  # wx.RESIZE_BORDER
         wx.Frame.__init__(self, *args, **kwds)
         self.SetName("Main Window")
@@ -46,6 +47,11 @@ class Frame(wx.Frame):
         # Set stay on-top unless user deactivated it
         if self.options.Get("StayOnTop", True):
             self.ToggleWindowStyle(wx.STAY_ON_TOP)
+        self.hiddenmenu = False
+        randomId = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.OnKeyCombo, id=randomId)
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, ord('F'), randomId)])
+        self.SetAcceleratorTable(accel_tbl)
 
         # Set parameters for columns
         self.columns = (
@@ -267,6 +273,28 @@ class Frame(wx.Frame):
         self._setTransparency()
         self.__do_layout()
 
+    def OnKeyCombo(self, event):
+        # cur win style
+        style = wx.Frame.GetWindowStyle(self)
+
+        if self.hiddenmenu:
+            #wx.Frame.SetWindowStyle(self, wx.DEFAULT_FRAME_STYLE)
+            wx.Frame.SetWindowStyleFlag(self,wx.DEFAULT_FRAME_STYLE)
+            self.SetMenuBar(self.menubar)
+            self.hiddenmenu = False
+        else:
+            #wx.Frame.SetWindowStyle(self,wx.NO_BORDER)
+            wx.Frame.SetWindowStyleFlag(self,wx.NO_BORDER)
+            self.SetMenuBar(None)
+            self.hiddenmenu = True
+
+        # Reset StayOnTop
+        if self.options.Get("StayOnTop", True):
+            self.ToggleWindowStyle(wx.STAY_ON_TOP)
+
+        wx.Frame.Refresh(self)
+        print("Key Detected")
+
     def __set_properties(self, dark_toggle=None):
         '''
         Set the initial properties for the various widgets.
@@ -356,8 +384,8 @@ class Frame(wx.Frame):
         sizer_bottom.Add(self.status_label, 1, wx.ALIGN_CENTER_VERTICAL, 0)
         static_line = wx.StaticLine(self, wx.ID_ANY, style=wx.LI_VERTICAL)
         sizer_bottom.Add(static_line, 0, wx.EXPAND, 0)
-        sizer_bottom.Add(self.alpha_slider, 0, wx.ALIGN_RIGHT, 0)
-        sizer_main.Add(sizer_bottom, 0, wx.ALIGN_BOTTOM | wx.ALL | wx.EXPAND, 1)
+        sizer_bottom.Add(self.alpha_slider, 0, 0)
+        sizer_main.Add(sizer_bottom, 0, wx.ALL | wx.EXPAND, 1)
         self.SetSizer(sizer_main)
         self.Layout()
         self._restoreColWidth()
@@ -640,7 +668,7 @@ class Frame(wx.Frame):
             for value in out:
                 color = False
                 self.grid.SetCellValue(rowidx, colidx, str(value))
-                self.grid.SetCellAlignment(self.columns[colidx][2], rowidx, colidx)
+                self.grid.SetCellAlignment(self.columns[colidx][2], rowidx, colidx, wx.ALIGN_CENTRE)
                 if hl_blops and r[9] is not None and r[11] > 0:  # Highlight BLOPS chars
                     self.grid.SetCellTextColour(rowidx, colidx, self.hl1_colour)
                     color = True
