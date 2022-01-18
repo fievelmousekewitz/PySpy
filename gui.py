@@ -288,7 +288,6 @@ class Frame(wx.Frame):
             self.SetMenuBar(None)
             self.hiddenmenu = True
 
-
         # Reset StayOnTop
         if self.options.Get("StayOnTop", True):
             self.ToggleWindowStyle(wx.STAY_ON_TOP)
