@@ -32,6 +32,9 @@ Logger = logging.getLogger(__name__)
 
 
 class Frame(wx.Frame):
+    #hack
+    lastCharList = []
+
     def __init__(self, *args, **kwds):
 
         # Persistent Options
@@ -579,6 +582,7 @@ class Frame(wx.Frame):
         hl_cyno_prob = config.CYNO_HL_PERCENTAGE
         ignore_count = 0
         rowidx = 0
+        tmplist = []
         for r in outlist:
 
             ignore = False
@@ -591,6 +595,25 @@ class Frame(wx.Frame):
             if ignore:
                 self.grid.HideRow(rowidx)
                 ignore_count += 1
+
+
+            tmplist.append(r[2])
+
+            #remove names from current list that are in previous list
+            for entry in self.lastCharList:
+
+                if entry[2] == r[2]:
+
+                    # f = self.grid.GetCellFont(rowidx, colidx)
+                    tmplist.remove(entry[2])
+
+            # highlight names
+            for entry in tmplist:
+                if entry == r[2]:
+                    fnt = self.grid.GetCellFont(rowidx,3)
+                    self.grid.SetCellFont(rowidx,3,fnt.Bold())
+
+
 
             # Schema depending on output_list() in analyze.py
             id = r[0]  # Hidden, used for zKillboard link
@@ -716,11 +739,12 @@ class Frame(wx.Frame):
                     if hl_list and (entry[1] == out[3] or entry[1] == out[6]or entry[1] == out[8][:-4]):
                         self.grid.SetCellTextColour(rowidx, colidx, self.hl3_colour)
                         color = True
-
                 if not color:
                     self.grid.SetCellTextColour(rowidx, colidx, self.txt_colour)
                 colidx += 1
             rowidx += 1
+
+
 
         if duration is not None:
             statusmsg.push_status(
@@ -735,6 +759,7 @@ class Frame(wx.Frame):
                 str(ignore_count) + " ignored). Double click character to go " +
                 " to zKillboard."
                 )
+        self.lastCharList = outlist
 
     def updateStatusbar(self, msg):
         '''Gets called by push_status() in statusmsg.py.'''
