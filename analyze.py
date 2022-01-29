@@ -14,10 +14,12 @@ import queue
 import time
 import datetime
 
+import requests
 import apis
 import config
 import db
 import statusmsg
+
 # cSpell Checker - Correct Words****************************************
 # // cSpell:words affil, zkill, blops, qsize, numid, russsian, ccp's
 # // cSpell:words records_added
@@ -102,6 +104,20 @@ def main(char_names, conn_mem, cur_mem, conn_dsk, cur_dsk):
         tp.join()
         output = output_list(cur_mem)
         conn_mem.close()
+
+
+
+        #change to dynamic sys name
+        pyservdata = {
+            "Tarta": output
+        }
+
+        joutput = json.dumps(pyservdata)
+        print(joutput)
+        srvurl = 'http://localhost:5000'
+
+        requests.post(srvurl + '/postmethod?system=Tarta',json=joutput)
+
         return output
     else:
         return
